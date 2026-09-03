@@ -1,13 +1,13 @@
-// ========================================
-// IMPORTACIONES
-// ========================================
-
 import { Player } from "./player.js";
 
 import {
     walls,
     drawMap
 } from "./map.js";
+
+import {
+    createJoystick
+} from "./joystick.js";
 
 
 // ========================================
@@ -20,7 +20,6 @@ const canvas =
 const ctx =
     canvas.getContext("2d");
 
-
 ctx.imageSmoothingEnabled = false;
 
 
@@ -30,11 +29,8 @@ ctx.imageSmoothingEnabled = false;
 
 function resizeCanvas() {
 
-    canvas.width =
-        window.innerWidth;
-
-    canvas.height =
-        window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
 }
 
@@ -57,71 +53,42 @@ const player = new Player(
 
 const keys = {};
 
+window.addEventListener("keydown", (event) => {
 
-window.addEventListener(
-    "keydown",
+    keys[event.key.toLowerCase()] = true;
 
-    (event) => {
+});
 
-        keys[
-            event.key.toLowerCase()
-        ] = true;
+window.addEventListener("keyup", (event) => {
 
-    }
+    keys[event.key.toLowerCase()] = false;
 
-);
-
-
-window.addEventListener(
-    "keyup",
-
-    (event) => {
-
-        keys[
-            event.key.toLowerCase()
-        ] = false;
-
-    }
-
-);
+});
 
 
 // ========================================
 // JOYSTICK
 // ========================================
 
-// Solo cargar en dispositivos táctiles
-
 if (
     "ontouchstart" in window ||
     navigator.maxTouchPoints > 0
 ) {
 
-    const joystickModule =
-        await import("./joystick.js");
-
-
-    joystickModule.createJoystick(
-        player
-    );
+    createJoystick(player);
 
 }
 
 
 // ========================================
-// RESIZE
+// CAMBIO DE TAMAÑO
 // ========================================
 
-window.addEventListener(
-    "resize",
+window.addEventListener("resize", () => {
 
-    () => {
+    resizeCanvas();
 
-        resizeCanvas();
-
-    }
-
-);
+});
 
 
 // ========================================
@@ -130,21 +97,14 @@ window.addEventListener(
 
 function gameLoop() {
 
-
-    // -------------------------
-    // ACTUALIZAR PLAYER
-    // -------------------------
-
+    // Actualizar jugador
     player.update(
         keys,
         walls
     );
 
 
-    // -------------------------
-    // CÁMARA
-    // -------------------------
-
+    // Obtener cámara
     const camera =
         player.getCamera(
             canvas.width,
@@ -152,10 +112,7 @@ function gameLoop() {
         );
 
 
-    // -------------------------
-    // MAPA
-    // -------------------------
-
+    // Dibujar mapa
     drawMap(
         ctx,
         camera,
@@ -164,32 +121,21 @@ function gameLoop() {
     );
 
 
-    // -------------------------
-    // PLAYER
-    // -------------------------
-
+    // Dibujar Player
     ctx.save();
-
 
     ctx.translate(
         -camera.x,
         -camera.y
     );
 
-
     player.draw(ctx);
-
 
     ctx.restore();
 
 
-    // -------------------------
-    // SIGUIENTE FRAME
-    // -------------------------
-
-    requestAnimationFrame(
-        gameLoop
-    );
+    // Siguiente frame
+    requestAnimationFrame(gameLoop);
 
 }
 
