@@ -1,160 +1,179 @@
 
+// =========================
+// CANVAS
+// =========================
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 ctx.imageSmoothingEnabled = false;
 
 
-// ==========================
+// =========================
+// TAMAÑO
+// =========================
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+// =========================
 // PLAYER
-// ==========================
+// =========================
 
 const player = {
-    x: 400,
-    y: 300,
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+
     width: 32,
     height: 32,
+
     speed: 3
 };
 
 
-// ==========================
+// =========================
 // TECLADO
-// ==========================
+// =========================
 
 const keys = {};
 
-window.addEventListener("keydown", (event) => {
+window.addEventListener("keydown", function (event) {
+
     keys[event.key.toLowerCase()] = true;
+
 });
 
-window.addEventListener("keyup", (event) => {
+window.addEventListener("keyup", function (event) {
+
     keys[event.key.toLowerCase()] = false;
+
 });
 
 
-// ==========================
+// =========================
 // JOYSTICK
-// ==========================
+// =========================
 
-const joystick = {
-    active: false,
-    touchId: null,
+const joystick = document.getElementById("joystick");
+const knob = document.getElementById("joystickKnob");
 
-    centerX: 0,
-    centerY: 0,
+let joystickActive = false;
 
-    knobX: 0,
-    knobY: 0,
+let joystickX = 0;
+let joystickY = 0;
 
-    radius: 65,
-    knobRadius: 25,
+let touchId = null;
 
-    x: 0,
-    y: 0
-};
-
-const joystickBase = document.createElement("div");
-joystickBase.id = "joystick";
-
-const joystickKnob = document.createElement("div");
-joystickKnob.id = "joystickKnob";
-
-joystickBase.appendChild(joystickKnob);
-document.body.appendChild(joystickBase);
+const joystickRadius = 65;
 
 
-// ==========================
-// TOUCH
-// ==========================
+// =========================
+// TOUCH START
+// =========================
 
-joystickBase.addEventListener("touchstart", (event) => {
+joystick.addEventListener("touchstart", function (event) {
 
     event.preventDefault();
 
     const touch = event.changedTouches[0];
 
-    joystick.active = true;
-    joystick.touchId = touch.identifier;
+    touchId = touch.identifier;
 
-    const rect = joystickBase.getBoundingClientRect();
+    joystickActive = true;
 
-    joystick.centerX = rect.left + rect.width / 2;
-    joystick.centerY = rect.top + rect.height / 2;
-
-    updateJoystick(touch);
+    moveJoystick(touch);
 
 }, { passive: false });
 
 
-window.addEventListener("touchmove", (event) => {
+// =========================
+// TOUCH MOVE
+// =========================
 
-    if (!joystick.active) return;
+joystick.addEventListener("touchmove", function (event) {
+
+    event.preventDefault();
 
     for (const touch of event.changedTouches) {
 
-        if (touch.identifier === joystick.touchId) {
+        if (touch.identifier === touchId) {
 
-            event.preventDefault();
+            moveJoystick(touch);
 
-            updateJoystick(touch);
-            break;
         }
+
     }
 
 }, { passive: false });
 
 
-window.addEventListener("touchend", (event) => {
+// =========================
+// TOUCH END
+// =========================
+
+joystick.addEventListener("touchend", function (event) {
 
     for (const touch of event.changedTouches) {
 
-        if (touch.identifier === joystick.touchId) {
+        if (touch.identifier === touchId) {
 
-            joystick.active = false;
-            joystick.touchId = null;
+            joystickActive = false;
 
-            joystick.x = 0;
-            joystick.y = 0;
+            joystickX = 0;
+            joystickY = 0;
 
-            joystickKnob.style.transform = "translate(-50%, -50%)";
+            knob.style.left = "50%";
+            knob.style.top = "50%";
 
-            break;
         }
+
     }
 
 });
 
 
-// ==========================
-// CALCULAR JOYSTICK
-// ==========================
+// =========================
+// MOVER JOYSTICK
+// =========================
 
-function updateJoystick(touch) {
+function moveJoystick(touch) {
 
-    let dx = touch.clientX - joystick.centerX;
-    let dy = touch.clientY - joystick.centerY;
+    const rect = joystick.getBoundingClientRect();
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    let dx = touch.clientX - centerX;
+    let dy = touch.clientY - centerY;
 
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance > joystick.radius) {
+    if (distance > joystickRadius) {
 
-        dx = (dx / distance) * joystick.radius;
-        dy = (dy / distance) * joystick.radius;
+        dx = (dx / distance) * joystickRadius;
+        dy = (dy / distance) * joystickRadius;
 
     }
 
-    joystick.x = dx / joystick.radius;
-    joystick.y = dy / joystick.radius;
+    joystickX = dx / joystickRadius;
+    joystickY = dy / joystickRadius;
 
-    joystickKnob.style.transform =
-        `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    knob.style.left = `calc(50% + ${dx}px)`;
+    knob.style.top = `calc(50% + ${dy}px)`;
+
 }
 
 
-// ==========================
+// =========================
 // MOVIMIENTO
-// ==========================
+// =========================
 
 function updatePlayer() {
 
@@ -164,23 +183,34 @@ function updatePlayer() {
 
     // WASD
 
-    if (keys["w"]) moveY -= 1;
-    if (keys["s"]) moveY += 1;
-    if (keys["a"]) moveX -= 1;
-    if (keys["d"]) moveX += 1;
+    if (keys["w"]) {
+        moveY -= 1;
+    }
+
+    if (keys["s"]) {
+        moveY += 1;
+    }
+
+    if (keys["a"]) {
+        moveX -= 1;
+    }
+
+    if (keys["d"]) {
+        moveX += 1;
+    }
 
 
-    // Joystick
+    // JOYSTICK
 
-    if (joystick.active) {
+    if (joystickActive) {
 
-        moveX += joystick.x;
-        moveY += joystick.y;
+        moveX += joystickX;
+        moveY += joystickY;
 
     }
 
 
-    // Evitar que diagonal sea más rápida
+    // Normalizar movimiento diagonal
 
     const magnitude =
         Math.sqrt(moveX * moveX + moveY * moveY);
@@ -199,11 +229,13 @@ function updatePlayer() {
 }
 
 
-// ==========================
+// =========================
 // FONDO
-// ==========================
+// =========================
 
 function drawBackground() {
+
+    // Amarillo provisional del Backrooms
 
     ctx.fillStyle = "#c9bd6b";
 
@@ -217,19 +249,19 @@ function drawBackground() {
 }
 
 
-// ==========================
+// =========================
 // PLAYER
-// ==========================
+// =========================
 
 function drawPlayer() {
 
-    // Placeholder temporal
+    // Cuadrado provisional
 
     ctx.fillStyle = "#ff0000";
 
     ctx.fillRect(
-        player.x,
-        player.y,
+        player.x - player.width / 2,
+        player.y - player.height / 2,
         player.width,
         player.height
     );
@@ -237,25 +269,9 @@ function drawPlayer() {
 }
 
 
-// ==========================
-// CANVAS
-// ==========================
-
-function resizeCanvas() {
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-}
-
-window.addEventListener("resize", resizeCanvas);
-
-resizeCanvas();
-
-
-// ==========================
+// =========================
 // GAME LOOP
-// ==========================
+// =========================
 
 function gameLoop() {
 
@@ -269,4 +285,10 @@ function gameLoop() {
 
 }
 
+
+// =========================
+// INICIAR
+// =========================
+
 gameLoop();
+```
