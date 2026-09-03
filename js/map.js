@@ -1,4 +1,20 @@
 // ========================================
+// CONFIGURACIÓN
+// ========================================
+
+const TILE_SIZE = 64;
+
+
+// ========================================
+// TEXTURA DEL SUELO
+// ========================================
+
+const floorTexture = new Image();
+
+floorTexture.src = "./sprites/suelo.png";
+
+
+// ========================================
 // PAREDES
 // ========================================
 
@@ -60,9 +76,12 @@ export const walls = [
 
 export function drawMap(ctx, camera, width, height) {
 
-    // -------------------------
-    // FONDO
-    // -------------------------
+    // ====================================
+    // SUELO
+    // ====================================
+
+    // Primero rellenamos todo de un color
+    // por si la textura todavía no ha cargado.
 
     ctx.fillStyle = "#c9bd6b";
 
@@ -74,11 +93,63 @@ export function drawMap(ctx, camera, width, height) {
     );
 
 
-    // -------------------------
-    // PAREDES
-    // -------------------------
+    // ====================================
+    // TEXTURA DEL SUELO
+    // ====================================
 
-    ctx.fillStyle = "#7b3fb5";
+    if (floorTexture.complete && floorTexture.naturalWidth > 0) {
+
+        /*
+         * Calculamos qué parte del mapa
+         * debe aparecer según la cámara.
+         */
+
+        const startX =
+            Math.floor(camera.x / TILE_SIZE) * TILE_SIZE;
+
+        const startY =
+            Math.floor(camera.y / TILE_SIZE) * TILE_SIZE;
+
+
+        // Dibujamos suficientes tiles para
+        // cubrir toda la pantalla.
+
+        for (
+            let worldY = startY;
+            worldY < camera.y + height + TILE_SIZE;
+            worldY += TILE_SIZE
+        ) {
+
+            for (
+                let worldX = startX;
+                worldX < camera.x + width + TILE_SIZE;
+                worldX += TILE_SIZE
+            ) {
+
+                ctx.drawImage(
+
+                    floorTexture,
+
+                    worldX - camera.x,
+                    worldY - camera.y,
+
+                    TILE_SIZE,
+                    TILE_SIZE
+
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // ====================================
+    // PAREDES
+    // ====================================
+
+    ctx.fillStyle = "#151515";
 
 
     for (const wall of walls) {
