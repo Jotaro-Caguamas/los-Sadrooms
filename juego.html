@@ -3,98 +3,31 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Prueba Backrooms</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <title>Backrooms</title>
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #c9bd6b;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        #joystick {
-            position: fixed;
-            left: 30px;
-            bottom: 30px;
-
-            width: 130px;
-            height: 130px;
-
-            border-radius: 50%;
-            border: 3px solid white;
-
-            background: rgba(255,255,255,0.15);
-        }
-
-        #joystickKnob {
-            position: absolute;
-
-            width: 50px;
-            height: 50px;
-
-            left: 50%;
-            top: 50%;
-
-            transform: translate(-50%, -50%);
-
-            border-radius: 50%;
-            background: white;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+    <!-- Pantalla del juego -->
     <canvas id="gameCanvas"></canvas>
 
+
+    <!-- Joystick para teléfonos -->
     <div id="joystick">
+
         <div id="joystickKnob"></div>
+
     </div>
 
-    <script>
 
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Fondo
-        ctx.fillStyle = "#c9bd6b";
-        ctx.fillRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        // Player de prueba
-        ctx.fillStyle = "red";
-
-        ctx.fillRect(
-            canvas.width / 2 - 20,
-            canvas.height / 2 - 20,
-            40,
-            40
-        );
-
-    </script>
+    <!-- Juego -->
+    <script type="module" src="js/juego.js"></script>
 
 </body>
 
