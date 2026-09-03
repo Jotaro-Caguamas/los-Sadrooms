@@ -10,12 +10,12 @@ export class Player {
 
         this.speed = 3;
 
+        // Dirección del joystick
+        this.joystickX = 0;
+        this.joystickY = 0;
+
     }
 
-
-    // ==========================
-    // MOVIMIENTO
-    // ==========================
 
     update(keys) {
 
@@ -23,7 +23,9 @@ export class Player {
         let moveY = 0;
 
 
+        // ==========================
         // WASD
+        // ==========================
 
         if (keys["w"]) {
             moveY -= 1;
@@ -42,7 +44,17 @@ export class Player {
         }
 
 
-        // Evitar velocidad extra en diagonal
+        // ==========================
+        // JOYSTICK
+        // ==========================
+
+        moveX += this.joystickX;
+        moveY += this.joystickY;
+
+
+        // ==========================
+        // NORMALIZAR
+        // ==========================
 
         const distance =
             Math.sqrt(
@@ -59,17 +71,15 @@ export class Player {
         }
 
 
-        // Aplicar movimiento
+        // ==========================
+        // MOVER
+        // ==========================
 
         this.x += moveX * this.speed;
         this.y += moveY * this.speed;
 
     }
 
-
-    // ==========================
-    // DIBUJAR
-    // ==========================
 
     draw(ctx) {
 
