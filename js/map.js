@@ -4,7 +4,10 @@
 
 export const walls = [
 
-    // Pared superior
+    // -------------------------
+    // PARED SUPERIOR
+    // -------------------------
+
     {
         x: 100,
         y: 100,
@@ -12,7 +15,11 @@ export const walls = [
         height: 40
     },
 
-    // Pared izquierda
+
+    // -------------------------
+    // PARED IZQUIERDA
+    // -------------------------
+
     {
         x: 100,
         y: 100,
@@ -20,7 +27,11 @@ export const walls = [
         height: 500
     },
 
-    // Pared derecha
+
+    // -------------------------
+    // PARED DERECHA
+    // -------------------------
+
     {
         x: 860,
         y: 100,
@@ -28,7 +39,11 @@ export const walls = [
         height: 500
     },
 
-    // Pared inferior
+
+    // -------------------------
+    // PARED INFERIOR
+    // -------------------------
+
     {
         x: 100,
         y: 560,
@@ -43,9 +58,12 @@ export const walls = [
 // DIBUJAR MAPA
 // ========================================
 
-export function drawMap(ctx, width, height) {
+export function drawMap(ctx, camera, width, height) {
 
-    // Fondo
+    // -------------------------
+    // FONDO
+    // -------------------------
+
     ctx.fillStyle = "#c9bd6b";
 
     ctx.fillRect(
@@ -56,16 +74,25 @@ export function drawMap(ctx, width, height) {
     );
 
 
-    // Paredes
+    // -------------------------
+    // PAREDES
+    // -------------------------
+
     ctx.fillStyle = "#7b3fb5";
+
 
     for (const wall of walls) {
 
         ctx.fillRect(
-            wall.x,
-            wall.y,
+
+            wall.x - camera.x,
+
+            wall.y - camera.y,
+
             wall.width,
+
             wall.height
+
         );
 
     }
