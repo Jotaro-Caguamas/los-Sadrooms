@@ -18,62 +18,56 @@ canvas {
     height: 100%;
     image-rendering: pixelated;
 }
-```css
-/* ==========================
+
+
+/* =========================
    JOYSTICK
-   ========================== */
+   ========================= */
 
 #joystick {
     display: none;
 
     position: fixed;
-
-    left: 35px;
-    bottom: 35px;
+    left: 30px;
+    bottom: 30px;
 
     width: 130px;
     height: 130px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.12);
-    border: 3px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.15);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+
+    z-index: 10;
 
     touch-action: none;
-
-    z-index: 1000;
 }
 
 #joystickKnob {
-
     position: absolute;
-
-    left: 50%;
-    top: 50%;
 
     width: 50px;
     height: 50px;
 
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.45);
-    border: 2px solid rgba(255, 255, 255, 0.7);
+    left: 50%;
+    top: 50%;
 
     transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid white;
 
     pointer-events: none;
 }
 
 
-/* ==========================
-   SOLO TELÉFONOS / TABLETS
-   ========================== */
+/* Mostrar joystick en pantallas táctiles */
 
-@media (max-width: 768px) {
-
+@media (pointer: coarse) {
     #joystick {
         display: block;
     }
-
 }
-```
