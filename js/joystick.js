@@ -1,41 +1,76 @@
 // ========================================
-// JOYSTICK MÓVIL
+// JOYSTICK
 // ========================================
 
 export function createJoystick(player) {
 
-    // Crear joystick
-    const joystick = document.createElement("div");
-    const knob = document.createElement("div");
+    // ========================================
+    // CREAR ELEMENTOS
+    // ========================================
+
+    const joystick =
+        document.createElement("div");
+
+    const knob =
+        document.createElement("div");
+
 
     joystick.id = "joystick";
     knob.id = "joystickKnob";
 
+
     joystick.appendChild(knob);
+
     document.body.appendChild(joystick);
 
 
-    // Estilos
+    // ========================================
+    // ESTILO DEL JOYSTICK
+    // ========================================
+
     joystick.style.position = "fixed";
+
     joystick.style.left = "30px";
     joystick.style.bottom = "30px";
+
     joystick.style.width = "130px";
     joystick.style.height = "130px";
+
     joystick.style.borderRadius = "50%";
-    joystick.style.background = "rgba(255,255,255,0.15)";
-    joystick.style.border = "3px solid rgba(255,255,255,0.4)";
+
+    joystick.style.background =
+        "rgba(255,255,255,0.15)";
+
+    joystick.style.border =
+        "3px solid rgba(255,255,255,0.4)";
+
     joystick.style.zIndex = "1000";
+
     joystick.style.touchAction = "none";
 
+
+    // ========================================
+    // CÍRCULO INTERIOR
+    // ========================================
+
     knob.style.position = "absolute";
+
     knob.style.left = "50%";
     knob.style.top = "50%";
+
     knob.style.width = "50px";
     knob.style.height = "50px";
+
     knob.style.borderRadius = "50%";
-    knob.style.background = "rgba(255,255,255,0.5)";
-    knob.style.border = "2px solid white";
-    knob.style.transform = "translate(-50%, -50%)";
+
+    knob.style.background =
+        "rgba(255,255,255,0.5)";
+
+    knob.style.border =
+        "2px solid white";
+
+    knob.style.transform =
+        "translate(-50%, -50%)";
 
 
     // ========================================
@@ -43,6 +78,7 @@ export function createJoystick(player) {
     // ========================================
 
     let active = false;
+
     let touchId = null;
 
     let directionX = 0;
@@ -52,24 +88,14 @@ export function createJoystick(player) {
 
 
     // ========================================
-    // ACTUALIZAR PLAYER
-    // ========================================
-
-    function updatePlayer() {
-
-        player.joystickX = directionX;
-        player.joystickY = directionY;
-
-    }
-
-
-    // ========================================
     // MOVER JOYSTICK
     // ========================================
 
     function moveJoystick(touch) {
 
-        const rect = joystick.getBoundingClientRect();
+        const rect =
+            joystick.getBoundingClientRect();
+
 
         const centerX =
             rect.left + rect.width / 2;
@@ -78,29 +104,44 @@ export function createJoystick(player) {
             rect.top + rect.height / 2;
 
 
-        let dx = touch.clientX - centerX;
-        let dy = touch.clientY - centerY;
+        let dx =
+            touch.clientX - centerX;
+
+        let dy =
+            touch.clientY - centerY;
 
 
         const distance =
-            Math.sqrt(dx * dx + dy * dy);
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
 
 
-        // Limitar el joystick
+        // Limitar movimiento
+
         if (distance > radius) {
 
-            dx = (dx / distance) * radius;
-            dy = (dy / distance) * radius;
+            dx =
+                (dx / distance) * radius;
+
+            dy =
+                (dy / distance) * radius;
 
         }
 
 
         // Convertir a dirección
-        directionX = dx / radius;
-        directionY = dy / radius;
+
+        directionX =
+            dx / radius;
+
+        directionY =
+            dy / radius;
 
 
         // Mover círculo interior
+
         knob.style.left =
             `calc(50% + ${dx}px)`;
 
@@ -108,7 +149,11 @@ export function createJoystick(player) {
             `calc(50% + ${dy}px)`;
 
 
-        updatePlayer();
+        // Mandar dirección al Player
+
+        player.joystickX = directionX;
+
+        player.joystickY = directionY;
 
     }
 
@@ -119,20 +164,25 @@ export function createJoystick(player) {
 
     joystick.addEventListener(
         "touchstart",
+
         function(event) {
 
             event.preventDefault();
 
-            const touch = event.changedTouches[0];
+            const touch =
+                event.changedTouches[0];
 
             active = true;
 
-            touchId = touch.identifier;
+            touchId =
+                touch.identifier;
 
             moveJoystick(touch);
 
         },
+
         { passive: false }
+
     );
 
 
@@ -142,13 +192,18 @@ export function createJoystick(player) {
 
     joystick.addEventListener(
         "touchmove",
+
         function(event) {
 
             event.preventDefault();
 
-            for (const touch of event.changedTouches) {
+            for (
+                const touch of event.changedTouches
+            ) {
 
-                if (touch.identifier === touchId) {
+                if (
+                    touch.identifier === touchId
+                ) {
 
                     moveJoystick(touch);
 
@@ -157,7 +212,9 @@ export function createJoystick(player) {
             }
 
         },
+
         { passive: false }
+
     );
 
 
@@ -167,29 +224,40 @@ export function createJoystick(player) {
 
     joystick.addEventListener(
         "touchend",
+
         function(event) {
 
-            for (const touch of event.changedTouches) {
+            for (
+                const touch of event.changedTouches
+            ) {
 
-                if (touch.identifier === touchId) {
+                if (
+                    touch.identifier === touchId
+                ) {
 
                     active = false;
 
                     touchId = null;
 
+
                     directionX = 0;
                     directionY = 0;
 
-                    knob.style.left = "50%";
-                    knob.style.top = "50%";
 
-                    updatePlayer();
+                    player.joystickX = 0;
+                    player.joystickY = 0;
+
+
+                    knob.style.left = "50%";
+
+                    knob.style.top = "50%";
 
                 }
 
             }
 
         }
+
     );
 
 }
