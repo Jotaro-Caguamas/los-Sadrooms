@@ -13,7 +13,7 @@ ctx.imageSmoothingEnabled = false;
 
 
 // ==========================
-// TAMAÑO DE PANTALLA
+// TAMAÑO
 // ==========================
 
 function resizeCanvas() {
@@ -58,32 +58,17 @@ window.addEventListener("keyup", (event) => {
 
 
 // ==========================
-// ACTUALIZAR JUEGO
+// JOYSTICK
 // ==========================
 
-function update() {
+// Solo cargar joystick en dispositivos táctiles
 
-    player.update(keys);
+if ("ontouchstart" in window) {
 
-}
+    const joystickModule =
+        await import("./joystick.js");
 
-
-// ==========================
-// DIBUJAR JUEGO
-// ==========================
-
-function draw() {
-
-    // Mapa
-    drawMap(
-        ctx,
-        canvas.width,
-        canvas.height
-    );
-
-
-    // Player
-    player.draw(ctx);
+    joystickModule.createJoystick(player);
 
 }
 
@@ -94,17 +79,19 @@ function draw() {
 
 function gameLoop() {
 
-    update();
+    player.update(keys);
 
-    draw();
+    drawMap(
+        ctx,
+        canvas.width,
+        canvas.height
+    );
+
+    player.draw(ctx);
 
     requestAnimationFrame(gameLoop);
 
 }
 
-
-// ==========================
-// INICIAR
-// ==========================
 
 gameLoop();
